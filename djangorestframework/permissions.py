@@ -5,7 +5,7 @@ class to your view by setting your View's :attr:`permissions` class attribute.
 """
 
 from django.core.cache import cache
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext as _
 
 from djangorestframework import status
 from djangorestframework.response import ErrorResponse

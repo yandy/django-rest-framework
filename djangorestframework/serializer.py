@@ -140,7 +140,7 @@ class Serializer(object):
         if isinstance(obj, models.Model):
             opts = obj._meta
             return [field.name for field in opts.fields + opts.many_to_many]
-        elif isinstance(obj, mongoengine.Document):
+        elif isinstance(obj, (mongoengine.Document, mongoengine.EmbeddedDocument)):
             return [name for name, field in obj._fields.items()]
         else:
             return obj.keys()
@@ -289,7 +289,7 @@ class Serializer(object):
         Convert any object into a serializable representation.
         """
         
-        if isinstance(obj, (dict, models.Model, mongoengine.Document)):
+        if isinstance(obj, (dict, models.Model, mongoengine.Document, mongoengine.EmbeddedDocument)):
             # Model instances & dictionaries
             return self.serialize_model(obj)
         elif isinstance(obj, (tuple, list, set, QuerySet, mongoengine.queryset.QuerySet, types.GeneratorType)):

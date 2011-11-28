@@ -284,6 +284,15 @@ class DocumentingTemplateRenderer(BaseRenderer):
         needed to self-document the response to this request.
         """
 
+        try:
+            template = loader.get_template("%d.html" % self.view.response.status)
+        except:
+            template = None
+
+        if template:
+            ret = template.render({"content": obj})
+            return ret
+
         put_form_instance = self._get_form_instance(self.view, 'put')
         post_form_instance = self._get_form_instance(self.view, 'post')
 
