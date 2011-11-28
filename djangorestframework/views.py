@@ -105,7 +105,7 @@ class View(ResourceMixin, RequestMixin, ResponseMixin, AuthMixin, DjangoView):
 
     # Note: session based authentication is explicitly CSRF validated,
     # all other authentication is CSRF exempt.
-    @csrf_exempt
+    #@csrf_exempt we need enable csrf by default
     def dispatch(self, request, *args, **kwargs):
         self.request = request
         self.args = args

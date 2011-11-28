@@ -1,3 +1,5 @@
+from mongoengine.django.forms import DocForm
+
 from django import forms
 from django.core.urlresolvers import reverse, get_urlconf, get_resolver, NoReverseMatch
 from django.db import models
@@ -12,8 +14,6 @@ from djangorestframework.utils import as_tuple
 import decimal
 import inspect
 import re
-
-
 
 
 class BaseResource(Serializer):
@@ -402,6 +402,65 @@ class ModelResource(FormResource):
         property_fields = set(attr for attr in dir(self.model) if
                               isinstance(getattr(self.model, attr, None), property)
                               and not attr.startswith('_'))
+
+        if self.fields:
+            return property_fields & set(as_tuple(self.fields))
+
+        return property_fields.union(set(as_tuple(self.include))) - set(as_tuple(self.exclude))
+
+
+class DocResource(FormResource):
+    """
+    """
+    form = None
+    document = None
+    fields = None
+    exclude = ('id', 'pk')
+    include = ()
+
+    def __init__(self, view=None, depth=None, stack=[], **kwargs):
+        super(DocResource, self).__init__(view, depth, stack, **kwargs)
+        self.document = getattr(view, 'document', None) or self.document
+
+    def validate_request(self, data, files=None):
+        return self._validate(data, files, allowed_extra_fields=self._property_fields_set)
+
+    def get_bound_form(self, data=None, files=None, method=None):
+        form = self.get_form_class(method)
+
+        if not form and self.document:
+            class OnTheFlyDocumentForm(DocForm):
+                class Meta:
+                    document = self.document
+
+            form = OnTheFlyDocumentForm
+
+        if not form:
+            return None
+
+        if data is not None or files is not None:
+            if issubclass(form, DocForm) and hasattr(self.view, 'document_instance'):
+                return form(data, files, instance=self.view.document_instance)
+            else:
+                return form(data, files)
+
+        return form()
+
+    @property
+    def _doc_fields_set(self):
+        """
+        """
+        doc_fields = set(name for name, field in self.document._fields.items())
+        if fields:
+            return doc_fields & set(as_tuple(self.fields))
+
+        return doc_fields - set(as_tuple(self.exclude))
+
+    @property
+    def _property_fields_set(self):
+        property_fields = set(attr for attr in dir(self.document) if
+                isinstance(getattr(self.document, attr, None), property)
+                and not attr.startswith('_'))
 
         if self.fields:
             return property_fields & set(as_tuple(self.fields))

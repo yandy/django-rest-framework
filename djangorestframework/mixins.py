@@ -11,7 +11,7 @@ from django.http import HttpResponse
 from djangorestframework import status
 from djangorestframework.parsers import FormParser, MultiPartParser
 from djangorestframework.renderers import BaseRenderer
-from djangorestframework.resources import Resource, FormResource, ModelResource
+from djangorestframework.resources import Resource, FormResource, ModelResource, DocResource
 from djangorestframework.response import Response, ErrorResponse
 from djangorestframework.utils import as_tuple, MSIE_USER_AGENT_REGEX
 from djangorestframework.utils.mediatypes import is_form_media_type, order_by_precedence
@@ -34,7 +34,13 @@ __all__ = (
     'CreateModelMixin',
     'UpdateModelMixin',
     'DeleteModelMixin',
-    'ListModelMixin'
+    'ListModelMixin',
+    # Document behavior mixins
+    'ReadDocMixin',
+    'CreateDocMixin',
+    'UpdateDocMixin',
+    'DeleteDocMixin',
+    'ListDocMixin',
 )
 
 
@@ -429,11 +435,13 @@ class ResourceMixin(object):
     def _resource(self):
         if self.resource:
             return self.resource(self)
+        elif getattr(self, 'document', None):
+            return DocResource(self)
         elif getattr(self, 'model', None):
             return ModelResource(self)
         elif getattr(self, 'form', None):
             return FormResource(self)
-        elif getattr(self, '%s_form' % self.method.lower(), None):
+        elif getattr(self, 'get_form', None) or getattr(self, 'put_form', None) or getattr(self, 'post_form', None):
             return FormResource(self)
         return Resource(self)
 
@@ -636,4 +644,17 @@ class ListModelMixin(object):
             queryset = queryset.order_by(*args)
         return queryset.filter(**kwargs)
 
+class ReadDocMixin(object):
+    pass
 
+class CreateDocMixin(object):
+    pass
+
+class UpdateDocMixin(object):
+    pass
+
+class DeleteDocMixin(object):
+    pass
+
+class ListDocMixin(object):
+    pass

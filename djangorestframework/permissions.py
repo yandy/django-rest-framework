@@ -5,6 +5,8 @@ class to your view by setting your View's :attr:`permissions` class attribute.
 """
 
 from django.core.cache import cache
+from django.utils.translation import ugettext_lazy as _
+
 from djangorestframework import status
 from djangorestframework.response import ErrorResponse
 import time
@@ -23,12 +25,11 @@ __all__ = (
 
 _403_FORBIDDEN_RESPONSE = ErrorResponse(
     status.HTTP_403_FORBIDDEN,
-    {'detail': 'You do not have permission to access this resource. ' +
-               'You may need to login or otherwise authenticate the request.'})
+    {'detail': _('You do not have permission to access this resource. You may need to login or otherwise authenticate the request.')})
 
 _503_SERVICE_UNAVAILABLE = ErrorResponse(
     status.HTTP_503_SERVICE_UNAVAILABLE,
-    {'detail': 'request was throttled'})
+    {'detail': _('request was throttled')})
 
 
 class BasePermission(object):

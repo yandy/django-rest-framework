@@ -9,6 +9,7 @@ from django.utils.encoding import smart_unicode, is_protected_type, smart_str
 import decimal
 import inspect
 import types
+import mongoengine
 
 
 # We register serializer classes, so that we can refer to them by their
@@ -139,6 +140,8 @@ class Serializer(object):
         if isinstance(obj, models.Model):
             opts = obj._meta
             return [field.name for field in opts.fields + opts.many_to_many]
+        elif isinstance(obj, mongoengine.Document):
+            return [name for name, field in obj._fields.items()]
         else:
             return obj.keys()
 
@@ -286,10 +289,10 @@ class Serializer(object):
         Convert any object into a serializable representation.
         """
         
-        if isinstance(obj, (dict, models.Model)):
+        if isinstance(obj, (dict, models.Model, mongoengine.Document)):
             # Model instances & dictionaries
             return self.serialize_model(obj)
-        elif isinstance(obj, (tuple, list, set, QuerySet, types.GeneratorType)):
+        elif isinstance(obj, (tuple, list, set, QuerySet, mongoengine.queryset.QuerySet, types.GeneratorType)):
             # basic iterables
             return self.serialize_iter(obj)
         elif isinstance(obj, models.Manager):

@@ -284,8 +284,6 @@ class DocumentingTemplateRenderer(BaseRenderer):
         needed to self-document the response to this request.
         """
 
-        content = self._get_content(self.view, self.view.request, obj, media_type)
-
         put_form_instance = self._get_form_instance(self.view, 'put')
         post_form_instance = self._get_form_instance(self.view, 'post')
 
@@ -310,9 +308,8 @@ class DocumentingTemplateRenderer(BaseRenderer):
 
         template = loader.get_template(self.template)
         context = RequestContext(self.view.request, {
-            'content': content,
+            'content': obj,
             'view': self.view,
-            'request': self.view.request, # TODO: remove
             'response': self.view.response,
             'description': description,
             'name': name,
@@ -326,7 +323,6 @@ class DocumentingTemplateRenderer(BaseRenderer):
             'logout_url': logout_url,
             'FORMAT_PARAM': self._FORMAT_QUERY_PARAM,
             'METHOD_PARAM': getattr(self.view, '_METHOD_PARAM', None),
-            'ADMIN_MEDIA_PREFIX': settings.ADMIN_MEDIA_PREFIX
         })
         
         ret = template.render(context)
