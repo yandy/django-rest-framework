@@ -284,6 +284,11 @@ class DocumentingTemplateRenderer(BaseRenderer):
         needed to self-document the response to this request.
         """
 
+        if url_resolves(settings.LOGIN_URL):
+            login_url = "%s?next=%s" % (settings.LOGIN_URL, quote_plus(self.view.request.path))
+        else:
+            login_url = None
+
         try:
             template = loader.get_template("%d.html" % self.view.response.status)
         except:
@@ -295,13 +300,6 @@ class DocumentingTemplateRenderer(BaseRenderer):
 
         put_form_instance = self._get_form_instance(self.view, 'put')
         post_form_instance = self._get_form_instance(self.view, 'post')
-
-        if url_resolves(settings.LOGIN_URL) and url_resolves(settings.LOGOUT_URL):
-            login_url = "%s?next=%s" % (settings.LOGIN_URL, quote_plus(self.view.request.path))
-            logout_url = "%s?next=%s" % (settings.LOGOUT_URL, quote_plus(self.view.request.path))
-        else:
-            login_url = None
-            logout_url = None
 
         name = get_name(self.view)
         description = get_description(self.view)
@@ -329,7 +327,6 @@ class DocumentingTemplateRenderer(BaseRenderer):
             'put_form': put_form_instance,
             'post_form': post_form_instance,
             'login_url': login_url,
-            'logout_url': logout_url,
             'FORMAT_PARAM': self._FORMAT_QUERY_PARAM,
             'METHOD_PARAM': getattr(self.view, '_METHOD_PARAM', None),
         })

@@ -42,7 +42,7 @@ class BasePermission(object):
         """
         self.view = view
     
-    def check_permission(self, auth, *args, **kwargs):
+    def check_permission(self, auth):
         """
         Should simply return, or raise an :exc:`response.ErrorResponse`.
         """
@@ -54,7 +54,7 @@ class FullAnonAccess(BasePermission):
     Allows full access.
     """
 
-    def check_permission(self, user, *args, **kwargs):
+    def check_permission(self, user):
         pass
 
 
@@ -63,7 +63,7 @@ class IsAuthenticated(BasePermission):
     Allows access only to authenticated users.
     """
 
-    def check_permission(self, user, *args, **kwargs):
+    def check_permission(self, user):
         if not user.is_authenticated():
             raise _403_FORBIDDEN_RESPONSE 
 
@@ -73,7 +73,7 @@ class IsAdminUser(BasePermission):
     Allows access only to admin users.
     """
 
-    def check_permission(self, user, *args, **kwargs):
+    def check_permission(self, user):
         if not user.is_staff:
             raise _403_FORBIDDEN_RESPONSE
 
@@ -83,7 +83,7 @@ class IsUserOrIsAnonReadOnly(BasePermission):
     The request is authenticated as a user, or is a read-only request.
     """
 
-    def check_permission(self, user, *args, **kwargs): 
+    def check_permission(self, user): 
         if (not user.is_authenticated() and
             self.view.method != 'GET' and
             self.view.method != 'HEAD'):
@@ -114,7 +114,7 @@ class BaseThrottle(BasePermission):
         """
         pass
 
-    def check_permission(self, auth, *args, **kwargs):
+    def check_permission(self, auth):
         """
         Check the throttling.
         Return `None` or raise an :exc:`.ErrorResponse`.
