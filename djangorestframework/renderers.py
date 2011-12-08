@@ -295,7 +295,8 @@ class DocumentingTemplateRenderer(BaseRenderer):
             template = None
 
         if template:
-            ret = template.render({"content": obj})
+            content = self._get_content(self.view, self.view.request, obj, media_type)
+            ret = template.render({"content": content})
             return ret
 
         put_form_instance = self._get_form_instance(self.view, 'put')
