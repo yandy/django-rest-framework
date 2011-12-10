@@ -15,9 +15,7 @@ from django.utils import simplejson as json
 from djangorestframework.compat import apply_markdown, yaml
 from djangorestframework.utils import dict2xml, url_resolves
 from djangorestframework.utils.breadcrumbs import get_breadcrumbs
-from djangorestframework.utils.description import get_name, get_description
 from djangorestframework.utils.mediatypes import get_media_type_params, add_media_type_param, media_type_matches
-from djangorestframework import VERSION
 
 import string
 from urllib import quote_plus
@@ -302,16 +300,6 @@ class DocumentingTemplateRenderer(BaseRenderer):
         put_form_instance = self._get_form_instance(self.view, 'put')
         post_form_instance = self._get_form_instance(self.view, 'post')
 
-        name = get_name(self.view)
-        description = get_description(self.view)
-
-        markeddown = None
-        if apply_markdown:
-            try:
-                markeddown = apply_markdown(description)
-            except AttributeError:
-                markeddown = None
-
         breadcrumb_list = get_breadcrumbs(self.view.request.path)
 
         template = loader.get_template(self.template)
@@ -319,15 +307,13 @@ class DocumentingTemplateRenderer(BaseRenderer):
             'content': obj,
             'view': self.view,
             'response': self.view.response,
-            'description': description,
-            'name': name,
-            'version': VERSION,
-            'markeddown': markeddown,
             'breadcrumblist': breadcrumb_list,
             'available_formats': self.view._rendered_formats,
             'put_form': put_form_instance,
             'post_form': post_form_instance,
             'login_url': login_url,
+            # A hook here. a convenience way to add extra context
+            'extra': getattr(self.view, 'extra', None),
             'FORMAT_PARAM': self._FORMAT_QUERY_PARAM,
             'METHOD_PARAM': getattr(self.view, '_METHOD_PARAM', None),
         })
