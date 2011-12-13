@@ -198,80 +198,8 @@ class DocumentingTemplateRenderer(BaseRenderer):
         content = renderers[0](view).render(obj, media_type)
         if not all(char in string.printable for char in content):
             return '[%d bytes of binary content]'
-            
+
         return content
-
-
-    def _get_form_instance(self, view, method):
-        """
-        Get a form, possibly bound to either the input or output data.
-        In the absence on of the Resource having an associated form then
-        provide a form that can be used to submit arbitrary content.
-        """
-
-        # Get the form instance if we have one bound to the input
-        form_instance = None
-        if method == getattr(view, 'method', view.request.method).lower():
-            form_instance = getattr(view, 'bound_form_instance', None)
-
-        if not form_instance and hasattr(view, 'get_bound_form'):
-            # Otherwise if we have a response that is valid against the form then use that
-            if view.response.has_content_body:
-                try:
-                    form_instance = view.get_bound_form(view.response.cleaned_content, method=method)
-                    if form_instance and not form_instance.is_valid():
-                        form_instance = None
-                except:
-                    form_instance = None
-
-        # If we still don't have a form instance then try to get an unbound form
-        if not form_instance:
-            try:
-                form_instance = view.get_bound_form(method=method)
-            except:
-                pass
-
-        # If we still don't have a form instance then try to get an unbound form which can tunnel arbitrary content types
-        if not form_instance:
-            form_instance = self._get_generic_content_form(view)
-        
-        return form_instance
-
-
-    def _get_generic_content_form(self, view):
-        """
-        Returns a form that allows for arbitrary content types to be tunneled via standard HTML forms
-        (Which are typically application/x-www-form-urlencoded)
-        """
-
-        # If we're not using content overloading there's no point in supplying a generic form,
-        # as the view won't treat the form's value as the content of the request.
-        if not getattr(view, '_USE_FORM_OVERLOADING', False):
-            return None
-
-        # NB. http://jacobian.org/writing/dynamic-form-generation/
-        class GenericContentForm(forms.Form):
-            def __init__(self, view):
-                """We don't know the names of the fields we want to set until the point the form is instantiated,
-                as they are determined by the Resource the form is being created against.
-                Add the fields dynamically."""
-                super(GenericContentForm, self).__init__()
-
-                contenttype_choices = [(media_type, media_type) for media_type in view._parsed_media_types]
-                initial_contenttype = view._default_parser.media_type
-
-                self.fields[view._CONTENTTYPE_PARAM] = forms.ChoiceField(label='Content Type',
-                                                                         choices=contenttype_choices,
-                                                                         initial=initial_contenttype)
-                self.fields[view._CONTENT_PARAM] = forms.CharField(label='Content',
-                                                                   widget=forms.Textarea)
-
-        # If either of these reserved parameters are turned off then content tunneling is not possible
-        if self.view._CONTENTTYPE_PARAM is None or self.view._CONTENT_PARAM is None:
-            return None
-
-        # Okey doke, let's do it
-        return GenericContentForm(view)
 
 
     def render(self, obj=None, media_type=None):
@@ -297,20 +225,12 @@ class DocumentingTemplateRenderer(BaseRenderer):
             ret = template.render({"content": content})
             return ret
 
-        put_form_instance = self._get_form_instance(self.view, 'put')
-        post_form_instance = self._get_form_instance(self.view, 'post')
-
-        breadcrumb_list = get_breadcrumbs(self.view.request.path)
-
         template = loader.get_template(self.template)
         context = RequestContext(self.view.request, {
             'content': obj,
             'view': self.view,
             'response': self.view.response,
-            'breadcrumblist': breadcrumb_list,
             'available_formats': self.view._rendered_formats,
-            'put_form': put_form_instance,
-            'post_form': post_form_instance,
             'login_url': login_url,
             # A hook here. a convenience way to add extra context
             'extra': getattr(self.view, 'extra', None),
