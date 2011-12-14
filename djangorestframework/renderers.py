@@ -222,7 +222,8 @@ class DocumentingTemplateRenderer(BaseRenderer):
 
         if template:
             content = self._get_content(self.view, self.view.request, obj, media_type)
-            ret = template.render({"content": content})
+            context = RequestContext(self.view.request, {"content": content})
+            ret = template.render(context)
             return ret
 
         template = loader.get_template(self.template)
