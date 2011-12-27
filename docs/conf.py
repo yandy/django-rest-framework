@@ -55,9 +55,13 @@ copyright = u'2011, Tom Christie'
 # built documents.
 #
 # The short X.Y version.
-version = '0.1'
+
+import djangorestframework
+
+version = djangorestframework.__version__
+
 # The full version, including alpha/beta/rc tags.
-release = '0.1'
+release = version
 
 autodoc_member_order='bysource'
 
@@ -100,7 +104,7 @@ pygments_style = 'sphinx'
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-html_theme = 'default'
+html_theme = 'sphinxdoc'
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
@@ -220,3 +224,5 @@ html_static_path = []
 #man_pages = [
 #    ()
 #]
+
+linkcheck_timeout = 120 # seconds, set to extra large value for link_checks

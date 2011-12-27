@@ -11,7 +11,7 @@ Introduction
 
 Django REST framework is a lightweight REST framework for Django, that aims to make it easy to build well-connected, self-describing RESTful Web APIs.
 
-**Browse example APIs created with Django REST framework:** `The Sandbox <http://api.django-rest-framework.org/>`_ 
+**Browse example APIs created with Django REST framework:** `The Sandbox <http://api.django-rest-framework.org/>`_
 
 Features:
 
@@ -26,10 +26,10 @@ Features:
 Resources
 ---------
 
-**Project hosting:** `Bitbucket <https://bitbucket.org/tomchristie/django-rest-framework>`_ and `GitHub <https://github.com/tomchristie/django-rest-framework>`_.
+**Project hosting:** `GitHub <https://github.com/tomchristie/django-rest-framework>`_.
 
 * The ``djangorestframework`` package is `available on PyPI <http://pypi.python.org/pypi/djangorestframework>`_.
-* We have an active `discussion group <http://groups.google.com/group/django-rest-framework>`_ and a `project blog <http://blog.django-rest-framework.org>`_. 
+* We have an active `discussion group <http://groups.google.com/group/django-rest-framework>`_.
 * Bug reports are handled on the `issue tracker <https://github.com/tomchristie/django-rest-framework/issues>`_.
 * There is a `Jenkins CI server <http://jenkins.tibold.nl/job/djangorestframework/>`_ which tracks test status and coverage reporting.  (Thanks Marko!)
 
@@ -45,14 +45,12 @@ Requirements
 Installation
 ------------
 
-
 You can install Django REST framework using ``pip`` or ``easy_install``::
 
     pip install djangorestframework
 
 Or get the latest development version using mercurial or git::
 
-    hg clone https://bitbucket.org/tomchristie/django-rest-framework
     git clone git@github.com:tomchristie/django-rest-framework.git
 
 Or you can `download the current release <http://pypi.python.org/pypi/djangorestframework>`_.
@@ -78,7 +76,7 @@ Using Django REST framework can be as simple as adding a few lines to your urlco
     from djangorestframework.resources import ModelResource
     from djangorestframework.views import ListOrCreateModelView, InstanceModelView
     from myapp.models import MyModel
-    
+
     class MyResource(ModelResource):
         model = MyModel
 
@@ -91,7 +89,7 @@ Django REST framework comes with two "getting started" examples.
 
 #. :ref:`views`
 #. :ref:`modelviews`
-	
+
 Examples
 --------
 
@@ -143,7 +141,7 @@ Examples Reference
 
 .. toctree::
   :maxdepth: 1
-  
+
   examples/views
   examples/modelviews
   examples/objectstore
