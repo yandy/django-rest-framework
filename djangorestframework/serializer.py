@@ -237,12 +237,12 @@ class Serializer(object):
                 meth = getattr(self, fname)
                 if inspect.ismethod(meth) and len(inspect.getargspec(meth)[0]) == 2:
                     obj = meth(instance)
-            elif hasattr(instance, '__contains__') and fname in instance:
-                # check for a key 'fname' on the instance
-                obj = instance[fname]
             elif hasattr(instance, smart_str(fname)):
                 # finally check for an attribute 'fname' on the instance
                 obj = getattr(instance, fname)
+            elif hasattr(instance, '__contains__') and fname in instance:
+                # check for a key 'fname' on the instance
+                obj = instance[fname]
             else:
                 continue
 
