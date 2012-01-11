@@ -14,6 +14,7 @@ Django REST framework is a lightweight REST framework for Django, that aims to m
 **Browse example APIs created with Django REST framework:** `The Sandbox <http://rest.ep.io/>`_
 
 Features:
+---------
 
 * Automatically provides an awesome Django admin style `browse-able self-documenting API <http://rest.ep.io>`_.
 * Clean, simple, views for Resources, using Django's new `class based views <http://docs.djangoproject.com/en/dev/topics/class-based-views/>`_.
@@ -39,7 +40,7 @@ Requirements
 ------------
 
 * Python (2.5, 2.6, 2.7 supported)
-* Django (1.2, 1.3 supported)
+* Django (1.2, 1.3, 1.4-alpha supported)
 
 
 Installation
@@ -49,7 +50,7 @@ You can install Django REST framework using ``pip`` or ``easy_install``::
 
     pip install djangorestframework
 
-Or get the latest development version using mercurial or git::
+Or get the latest development version using git::
 
     git clone git@github.com:tomchristie/django-rest-framework.git
 
@@ -70,6 +71,13 @@ Getting Started
 
 Using Django REST framework can be as simple as adding a few lines to your urlconf.
 
+The following example exposes your `MyModel` model through an api. It will provide two views:
+
+ * A view which lists your model instances and simultaniously allows creation of instances 
+   from that view.
+
+ * Another view which lets you view, update or delete  your model instances individually.
+
 ``urls.py``::
 
     from django.conf.urls.defaults import patterns, url
@@ -85,63 +93,17 @@ Using Django REST framework can be as simple as adding a few lines to your urlco
         url(r'^(?P<pk>[^/]+)/$', InstanceModelView.as_view(resource=MyResource)),
     )
 
-Django REST framework comes with two "getting started" examples.
+.. include:: howto.rst
 
-#. :doc:`examples/views`
-#. :doc:`examples/modelviews`
-
-Examples
---------
-
-There are a few real world web API examples included with Django REST framework.
-
-#. :doc:`examples/objectstore` - Using :class:`views.View` classes for APIs that do not map to models.
-#. :doc:`examples/pygments` - Using :class:`views.View` classes with forms for input validation.
-#. :doc:`examples/blogpost` - Using :class:`views.ModelView` classes for APIs that map directly to models.
-
-All the examples are freely available for testing in the sandbox:
-
-    http://rest.ep.io
-
-(The :doc:`examples/sandbox` resource is also documented.)
+.. include:: library.rst
 
 
-How Tos, FAQs & Notes
----------------------
+.. include:: examples.rst
 
 .. toctree::
-  :maxdepth: 1
+  :hidden: 
 
-  howto/setup
-  howto/usingcurl
-  howto/alternativeframeworks
-  howto/mixin
-
-Library Reference
------------------
-
-.. toctree::
-  :maxdepth: 1
-
-  library/authentication
-  library/compat
-  library/mixins
-  library/parsers
-  library/permissions
-  library/renderers
-  library/resource
-  library/response
-  library/serializer
-  library/status
-  library/views
-
-Example Reference
------------------
-
-.. toctree::
-  :maxdepth: 2
-
-  examples.rst
+  contents
 
 Indices and tables
 ------------------
